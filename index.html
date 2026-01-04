@@ -1,318 +1,473 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Universe Z - O MMORPG de ação definitivo no navegador. Voe, lute e conquiste a galáxia.">
+    <title>Universe Z — Destroy The Galaxy</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Russo+One&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ffcc00;
+            --accent: #00ccff;
+            --danger: #ff3333;
+            --dark: #050510;
+            --glass: rgba(0, 0, 0, 0.7);
+            --border: rgba(255, 255, 255, 0.2);
+        }
 
-<title>Universe Z — Destroy The Galaxy</title>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+        body {
+            background: var(--dark);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-<style>
-:root{
-    --orange:#ff9f00;
-    --blue:#007bff;
-    --red:#ff2e2e;
-    --black:#0e0e0e;
-    --white:#ffffff;
-}
+        /* --- FUNDO ANIMADO (CANVAS) --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a0033 0%, #000000 100%);
+        }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+        /* --- TIPOGRAFIA & UTILITÁRIOS --- */
+        h1, h2, h3 { font-family: 'Russo One', sans-serif; text-transform: uppercase; }
+        .text-primary { color: var(--primary); }
+        .text-accent { color: var(--accent); }
+        .text-danger { color: var(--danger); }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
 
-body{
-    background:#111;
-    color:#fff;
-    font-family:'Roboto Condensed',sans-serif;
-    overflow-x:hidden;
-}
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-top: 60px;
+        }
 
-/* ================= HERO ================= */
-.hero{
-    min-height:100vh;
-    background:
-        radial-gradient(circle at top, rgba(255,160,0,.4), transparent 60%),
-        url("https://images.alphacoders.com/129/1290706.jpg") center/cover no-repeat;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-}
+        .logo-wrapper {
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+        }
 
-.hero::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(to bottom,#000000aa,#000);
-}
+        .main-title {
+            font-size: clamp(3rem, 10vw, 6rem);
+            background: linear-gradient(to bottom, #ffee00, #ff6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.5));
+            transform: skewX(-10deg);
+        }
 
-.hero-content{
-    position:relative;
-    text-align:center;
-    z-index:2;
-    max-width:900px;
-    padding:30px;
-}
+        .sub-title {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            color: #fff;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--accent);
+            margin-top: -10px;
+        }
 
-.logo{
-    font-family:'Bangers';
-    font-size:88px;
-    color:var(--orange);
-    text-shadow:
-        4px 4px 0 #000,
-        0 0 40px #ffb300;
-    line-height:.9;
-}
+        .hero-desc {
+            max-width: 700px;
+            margin: 20px auto 40px;
+            font-size: 1.2rem;
+            color: #ccc;
+            text-shadow: 1px 1px 2px #000;
+        }
 
-.logo span{
-    display:block;
-    font-size:28px;
-    color:#fff;
-    letter-spacing:4px;
-    margin-top:15px;
-}
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            background: linear-gradient(45deg, #ff6600, #ff0000);
+            border: 2px solid #fff;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(255, 50, 0, 0.6);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
 
-.tagline{
-    margin:30px auto;
-    font-size:22px;
-    background:#000;
-    display:inline-block;
-    padding:10px 25px;
-    border:3px solid #fff;
-    transform:skewX(-10deg);
-}
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 50, 0, 0.9);
+        }
 
-.hero-buttons{
-    margin-top:40px;
-    display:flex;
-    gap:25px;
-    justify-content:center;
-    flex-wrap:wrap;
-}
+        /* --- SECTIONS --- */
+        section { padding: 100px 0; }
 
-.btn{
-    font-family:'Bangers';
-    font-size:28px;
-    padding:18px 45px;
-    border:4px solid #000;
-    cursor:pointer;
-    box-shadow:8px 8px 0 #000;
-    transition:.2s;
-}
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
 
-.btn-play{
-    background:var(--blue);
-    color:#fff;
-}
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 4px;
+            background: var(--accent);
+            margin: 10px auto;
+            box-shadow: 0 0 10px var(--accent);
+        }
 
-.btn-discord{
-    background:#fff;
-    color:#000;
-}
+        /* --- CARDS (FEATURES) --- */
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
 
-.btn:hover{
-    transform:translate(-6px,-6px);
-    box-shadow:14px 14px 0 #000;
-}
+        .feature-card {
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
 
-/* ================= SECTIONS ================= */
-section{
-    padding:90px 20px;
-}
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-.section-title{
-    font-family:'Bangers';
-    font-size:52px;
-    text-align:center;
-    margin-bottom:50px;
-    color:var(--orange);
-    text-shadow:3px 3px 0 #000;
-}
+        .feature-icon { font-size: 3rem; margin-bottom: 20px; }
+        .feature-card h3 { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; }
 
-/* ================= GAME FEATURES ================= */
-.features{
-    max-width:1200px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:35px;
-}
+        /* --- SAGAS TIMELINE --- */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-.card{
-    background:#fff;
-    color:#000;
-    border:4px solid #000;
-    padding:30px;
-    box-shadow:10px 10px 0 #000;
-    position:relative;
-}
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--border);
+            transform: translateX(-50%);
+        }
 
-.card h3{
-    font-family:'Bangers';
-    font-size:30px;
-    margin-bottom:15px;
-}
+        .saga-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-bottom: 50px;
+            position: relative;
+            width: 50%;
+        }
 
-.card p{
-    font-size:18px;
-}
+        .saga-item:nth-child(even) {
+            align-self: flex-end;
+            justify-content: flex-start;
+            margin-left: 50%;
+        }
 
-.sfx{
-    position:absolute;
-    bottom:-15px;
-    right:10px;
-    font-family:'Bangers';
-    font-size:72px;
-    color:rgba(0,0,0,.1);
-}
+        .saga-content {
+            background: linear-gradient(135deg, rgba(50,0,0,0.8), rgba(0,0,0,0.9));
+            padding: 20px;
+            border-left: 4px solid var(--danger);
+            border-radius: 8px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .saga-item:nth-child(even) .saga-content {
+            border-left: none;
+            border-right: 4px solid var(--accent);
+            background: linear-gradient(135deg, rgba(0,0,50,0.8), rgba(0,0,0,0.9));
+            text-align: right;
+        }
 
-/* ================= POWER LOOP ================= */
-.loop{
-    background:#000;
-    text-align:center;
-}
+        .saga-dot {
+            position: absolute;
+            top: 20px;
+            right: -12px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            z-index: 2;
+        }
+        
+        .saga-item:nth-child(even) .saga-dot {
+            right: auto;
+            left: -12px;
+        }
 
-.loop-steps{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:40px;
-}
+        /* --- FOOTER --- */
+        footer {
+            background: #000;
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: #888;
+        }
 
-.step{
-    width:180px;
-    height:180px;
-    border-radius:50%;
-    border:4px solid #fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Bangers';
-    font-size:22px;
-    background:var(--orange);
-    color:#000;
-}
+        /* --- ANIMAÇÕES --- */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
 
-/* ================= MAP ================= */
-.map{
-    background:url("https://images.alphacoders.com/117/1174584.jpg") center/cover no-repeat;
-    position:relative;
-}
-
-.map::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:#000000bb;
-}
-
-.map-content{
-    position:relative;
-    z-index:2;
-    text-align:center;
-}
-
-.zones span{
-    display:inline-block;
-    margin:10px;
-    padding:12px 25px;
-    border:3px solid #fff;
-    font-family:'Bangers';
-    background:#000;
-}
-
-/* ================= FOOTER ================= */
-footer{
-    background:var(--orange);
-    color:#000;
-    text-align:center;
-    padding:40px;
-    font-weight:bold;
-}
-
-/* ================= MOBILE ================= */
-@media(max-width:768px){
-    .logo{font-size:56px;}
-}
-</style>
+        /* --- RESPONSIVO --- */
+        @media (max-width: 768px) {
+            .timeline::before { left: 20px; }
+            .saga-item { width: 100%; justify-content: flex-start; padding-left: 50px; }
+            .saga-item:nth-child(even) { margin-left: 0; text-align: left; }
+            .saga-item:nth-child(even) .saga-content { text-align: left; border-right: none; border-left: 4px solid var(--accent); }
+            .saga-dot, .saga-item:nth-child(even) .saga-dot { left: 10px; right: auto; }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- HERO -->
-<div class="hero">
-    <div class="hero-content">
-        <div class="logo">
-            UNIVERSE Z
-            <span>DESTROY THE GALAXY</span>
-        </div>
+    <canvas id="bg-canvas"></canvas>
 
-        <div class="tagline">
-            LITE MMO DE AÇÃO • TEMPO REAL • NO NAVEGADOR
-        </div>
+    <div class="hero">
+        <div class="container">
+            <div class="logo-wrapper">
+                <h1 class="main-title">UNIVERSE Z</h1>
+                <div class="sub-title">DESTROY THE GALAXY</div>
+            </div>
+            
+            <p class="hero-desc">
+                O MMORPG de ação definitivo no seu navegador. Voe livremente, desbloqueie transformações lendárias,
+                lute em batalhas PvP intensas e conquiste planetas com sua guilda.
+                <br><br>
+                <strong>SEM DOWNLOAD. SEM INSTALAÇÃO. APENAS KI PURO.</strong>
+            </p>
 
-        <div class="hero-buttons">
-            <button class="btn btn-play" onclick="location.href='https://dbz-el7n.onrender.com'">
-                JOGAR AGORA
-            </button>
-            <button class="btn btn-discord">
-                COMUNIDADE
-            </button>
-        </div>
-    </div>
-</div>
+            <a href="https://dbz-spring-sun-2276.fly.dev" class="cta-button">JOGAR AGORA</a>
 
-<!-- FEATURES -->
-<section>
-    <h2 class="section-title">O JOGO</h2>
-    <div class="features">
-        <div class="card">
-            <h3>COMBATE ABSURDO</h3>
-            <p>Lutas rápidas, reflexo puro, rajadas de Ki, voo livre e impacto real.</p>
-            <div class="sfx">BAM!</div>
-        </div>
-
-        <div class="card">
-            <h3>MUNDO VIVO</h3>
-            <p>Planetas conectados, jogadores online, bosses globais e eventos.</p>
-            <div class="sfx">WHOOSH</div>
-        </div>
-
-        <div class="card">
-            <h3>TRANSFORMAÇÕES</h3>
-            <p>Cada forma muda velocidade, aura, dano e estilo de combate.</p>
-            <div class="sfx">AURA</div>
+            
+            <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">
+                Versão: 2.0 EVOLUTION (Definitive Edition)
+            </div>
         </div>
     </div>
-</section>
 
-<!-- LOOP -->
-<section class="loop">
-    <h2 class="section-title">CICLO DO PODER</h2>
-    <div class="loop-steps">
-        <div class="step">TREINAR</div>
-        <div class="step" style="background:var(--red);color:#fff;">LUTAR</div>
-        <div class="step">EVOLUIR</div>
-        <div class="step" style="background:var(--blue);color:#fff;">DOMINAR</div>
-    </div>
-</section>
+    <section id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>CARACTERÍSTICAS</h2>
+                <p>O que faz do Universe Z uma experiência única?</p>
+            </div>
 
-<!-- MAP -->
-<section class="map">
-    <div class="map-content">
-        <h2 class="section-title">UNIVERSO</h2>
-        <div class="zones">
-            <span>TERRA</span>
-            <span>NAMEK</span>
-            <span>ANDROIDES</span>
-            <span>MAJIN</span>
-            <span>DEUSES</span>
+            <div class="grid-features">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>COMBATE EM TEMPO REAL</h3>
+                    <p>Esqueça turnos. Aqui é reflexo puro. Use combos corpo-a-corpo, defenda rajadas de energia, use teletransporte (Vanish) e contra-ataque.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>UNIVERSO ABERTO</h3>
+                    <p>Viaje da Terra a Namekusei, explore o Reino dos Demônios e desafie os Deuses. Um mapa contínuo sem telas de carregamento irritantes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔥</div>
+                    <h3>SISTEMA DE FORMAS</h3>
+                    <p>Do Kaioken ao Instinto Superior. Cada transformação altera sua aura, velocidade e multiplicadores de dano. Sinta o poder crescer.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>DOMINAÇÃO DE GUILDA</h3>
+                    <p>Crie sua facção. Domine planetas inteiros. Cobre impostos de outros jogadores e defenda seu território de invasões.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>SISTEMA A.R.I.S.</h3>
+                    <p>Uma Inteligência Artificial integrada (Scouter) que guia sua jornada, alerta sobre perigos e narra sua evolução.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🐉</div>
+                    <h3>ESFERAS DO DRAGÃO</h3>
+                    <p>Encontre as 7 esferas espalhadas pelo cosmos. Mas cuidado: segurar uma esfera ativa o modo PvP globalmente!</p>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<footer>
-    UNIVERSE Z — DESTROY THE GALAXY • PROJETO DE FÃ • 2025
-</footer>
+    <section id="sagas">
+        <div class="container">
+            <div class="section-header">
+                <h2>MODO HISTÓRIA</h2>
+                <p>Reviva batalhas icônicas e mude o destino do universo.</p>
+            </div>
 
+            <div class="timeline">
+                <div class="saga-item">
+                    <div class="saga-dot"></div>
+                    <div class="saga-content">
+                        <h3 class="text-danger">SAGA SAIYAJIN</h3>
+                        <p>A invasão começa. Defenda a Terra de Raditz, Nappa e do Príncipe Vegeta. Aprenda o Kaioken no Planeta do Sr. Kaioh.</p>
+                    </div>
+                </div>
+                <div class="saga-item">
+                    <div class="saga-dot"></div>
+                    <div class="saga-content">
+                        <h3 class="text-accent">SAGA FREEZA</h3>
+                        <p>Viaje para Namekusei. Enfrente as Forças Especiais Ginyu e o Imperador do Mal. Desperte a lenda dourada.</p>
+                    </div>
+                </div>
+                <div class="saga-item">
+                    <div class="saga-dot"></div>
+                    <div class="saga-content">
+                        <h3 class="text-danger">SAGA ANDROIDES</h3>
+                        <p>Um futuro sombrio. Viaje no tempo, enfrente as criações do Dr. Gero e o bio-androide perfeito, Cell.</p>
+                    </div>
+                </div>
+                <div class="saga-item">
+                    <div class="saga-dot"></div>
+                    <div class="saga-content">
+                        <h3 class="text-accent">SAGA MAJIN</h3>
+                        <p>O despertar do mal antigo. Lute contra Dabura, Buu Gordo e o puro caos de Kid Buu no Reino Demoníaco.</p>
+                    </div>
+                </div>
+                <div class="saga-item">
+                    <div class="saga-dot"></div>
+                    <div class="saga-content">
+                        <h3 class="text-primary">SAGA DEUSES</h3>
+                        <p>O desafio final. Treine com Whis, alcance o Ki Divino e participe do Torneio do Poder pela sobrevivência.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <h2 style="font-family: 'Bangers'; color: #444; margin-bottom: 20px;">UNIVERSE Z</h2>
+            <p>Projeto desenvolvido por fãs para fãs. Dragon Ball é uma marca registrada de Akira Toriyama, Toei Animation e Shueisha.</p>
+            <p style="margin-top: 20px;">
+                <a href="#" style="color: #666; margin: 0 10px;">Termos</a>
+                <a href="#" style="color: #666; margin: 0 10px;">Privacidade</a>
+                <a href="#" style="color: #666; margin: 0 10px;">Discord</a>
+            </p>
+            <p style="margin-top: 30px; font-size: 0.8rem;">&copy; 2026 UNIVERSE Z TEAM. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        const stars = [];
+        const rocks = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Inicializa Estrelas
+        for(let i=0; i<200; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.2 + 0.05,
+                alpha: Math.random()
+            });
+        }
+
+        // Inicializa Rochas Flutuantes (Decorativo)
+        for(let i=0; i<5; i++) {
+            rocks.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: 20 + Math.random() * 40,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
+        }
+
+        function animate() {
+            // Limpa com rastro suave
+            ctx.fillStyle = "rgba(5, 5, 16, 0.4)";
+            ctx.fillRect(0, 0, width, height);
+
+            // Desenha Estrelas
+            ctx.fillStyle = "#ffffff";
+            stars.forEach(s => {
+                s.y += s.speed;
+                if(s.y > height) s.y = 0;
+                
+                ctx.globalAlpha = s.alpha * 0.8;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+            });
+
+            // Desenha Rochas (Silhuetas distantes)
+            ctx.fillStyle = "rgba(40, 40, 60, 0.3)";
+            rocks.forEach(r => {
+                r.x += r.vx;
+                r.y += r.vy;
+                
+                if(r.x > width + 100) r.x = -100;
+                if(r.x < -100) r.x = width + 100;
+                if(r.y > height + 100) r.y = -100;
+                if(r.y < -100) r.y = height + 100;
+
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.r, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Detalhe de sombra na rocha
+                ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+                ctx.beginPath();
+                ctx.arc(r.x + 5, r.y + 5, r.r * 0.8, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = "rgba(40, 40, 60, 0.3)"; // Reset cor
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
